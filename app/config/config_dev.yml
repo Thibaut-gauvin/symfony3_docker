@@ -1,0 +1,43 @@
+imports:
+    - { resource: config.yml }
+
+framework:
+    router:
+        resource: "%kernel.root_dir%/config/routing_dev.yml"
+        strict_requirements: true
+    session:
+        handler_id:  session.handler.native_file
+        save_path:   "/tmp/php/sessions"
+    profiler: { only_exceptions: false }
+
+web_profiler:
+    toolbar: true
+    intercept_redirects: false
+
+monolog:
+    handlers:
+        main:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+            channels: [!event]
+        console:
+            type:   console
+            channels: [!event, !doctrine]
+
+# Doctrine DEV Configuration
+doctrine:
+    dbal:
+        host:     "%dev_database_host%"
+        port:     "%dev_database_port%"
+        dbname:   "%dev_database_name%"
+        user:     "%dev_database_user%"
+        password: "%dev_database_password%"
+
+# Swiftmailer DEV Configuration
+swiftmailer:
+    transport: "%mailcatcher_transport%"
+    host:      "%mailcatcher_host%"
+    port:      "%mailcatcher_port%"
+    username:  "%mailcatcher_user%"
+    password:  "%mailcatcher_password%"

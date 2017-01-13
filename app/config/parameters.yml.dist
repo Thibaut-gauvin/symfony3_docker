@@ -1,0 +1,41 @@
+# This file is a "template" of what your parameters.yml file should look like
+# Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
+# http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
+parameters:
+    # Database Config PROD
+    database_host:          127.0.0.1
+    database_port:          3306
+    database_name:          ~
+    database_user:          ~
+    database_password:      ~
+
+    # Database Config DEV
+    dev_database_host:      db
+    dev_database_port:      3306
+    dev_database_name:      symfony
+    dev_database_user:      root
+    dev_database_password:  root
+
+    # Database Config TEST
+    test_database_host:     db
+    test_database_port:     3306
+    test_database_name:     symfony
+    test_database_user:     root
+    test_database_password: root
+
+    # Prod Mailer Config
+    mailer_transport:       ~
+    mailer_host:            ~
+    mailer_port:            ~
+    mailer_user:            ~
+    mailer_password:        ~
+
+    # Dev Mailer Config
+    mailcatcher_transport:  smtp
+    mailcatcher_host:       mailcatcher
+    mailcatcher_port:       1025
+    mailcatcher_user:       ~
+    mailcatcher_password:   ~
+
+    # Change This Token
+    secret:                 7p2CkiwX7U82U6wDK5IW9x86IHbQ3bcr

@@ -1,0 +1,14 @@
+# Configure the gedmo doctrine extensions <https://github.com/Atlantic18/DoctrineExtensions>
+#
+# See the symfony2 documentation here:
+#   https://github.com/Atlantic18/DoctrineExtensions/blob/master/doc/symfony2.md
+
+services:
+    # Timestampable behavior
+    # https://github.com/Atlantic18/DoctrineExtensions/blob/master/doc/timestampable.md
+    gedmo.listener.timestampable:
+        class: Gedmo\Timestampable\TimestampableListener
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        calls:
+            - [ setAnnotationReader, [ "@annotation_reader" ] ]

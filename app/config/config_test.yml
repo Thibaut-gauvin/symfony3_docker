@@ -1,0 +1,26 @@
+imports:
+    - { resource: config_dev.yml }
+
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+    profiler:
+        collect: false
+
+web_profiler:
+    toolbar: false
+    intercept_redirects: false
+
+swiftmailer:
+    disable_delivery: true
+
+# Doctrine TEST Configuration
+doctrine:
+    dbal:
+        host:     "%test_database_host%"
+        port:     "%test_database_port%"
+        dbname:   "%test_database_name%"
+        user:     "%test_database_user%"
+        password: "%test_database_password%"
+

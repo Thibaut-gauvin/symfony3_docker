@@ -1,0 +1,43 @@
+imports:
+    - { resource: config.yml }
+
+framework:
+    session:
+        handler_id:  session.handler.native_file
+        save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
+
+#doctrine:
+#    orm:
+#        metadata_cache_driver: apc
+#        result_cache_driver: apc
+#        query_cache_driver: apc
+
+monolog:
+    handlers:
+        main:
+            type:         fingers_crossed
+            action_level: error
+            handler:      nested
+        nested:
+            type:  stream
+            path:  "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+        console:
+            type:  console
+
+# Doctrine PROD Configuration
+doctrine:
+    dbal:
+        host:     "%database_host%"
+        port:     "%database_port%"
+        dbname:   "%database_name%"
+        user:     "%database_user%"
+        password: "%database_password%"
+
+# Swiftmailer PROD Configuration
+swiftmailer:
+    transport: "%mailcatcher_transport%"
+    host:      "%mailcatcher_host%"
+    port:      "%mailcatcher_port%"
+    username:  "%mailcatcher_user%"
+    password:  "%mailcatcher_password%"
