@@ -29,6 +29,11 @@ RUN wget -O /phpmetrics.phar http://github.com/phpmetrics/PhpMetrics/raw/master/
 RUN chmod +x /phpmetrics.phar
 RUN mv /phpmetrics.phar /usr/local/bin/phpmetrics
 
+# Install PhpDocumentor
+RUN wget -O /phpDocumentor.phar https://github.com/phpDocumentor/phpDocumentor2/releases/download/v2.9.0/phpDocumentor.phar
+RUN chmod +x /phpDocumentor.phar
+RUN mv /phpDocumentor.phar /usr/local/bin/phpDocumentor
+
 # Add opcache
 RUN docker-php-ext-install opcache
 
@@ -38,13 +43,6 @@ RUN pecl install apcu \
 
 # Install NodeJs
 RUN ln -s /usr/bin/nodejs /usr/bin/node
-
-# Install BlackFire Probe for profiling App
-RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
-    && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
-    && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp \
-    && mv /tmp/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
-    && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > $PHP_INI_DIR/conf.d/blackfire.ini
 
 # Add user DOCKER_USER defined in .env & give sudo privilege
 RUN adduser --disabled-password --gecos '' ${DOCKER_USER}

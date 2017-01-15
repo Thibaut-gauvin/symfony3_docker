@@ -21,11 +21,12 @@
 
 /.idea
 /node_modules
-npm-debug.log
+/npm-debug.log
 
 /web/assets
 
 .data/
 .env
-report.html
 
+/report.html
+/doc/

@@ -16,10 +16,12 @@ services:
         dns_search: "symfony.dev"
         ports:
             - "${NGINX_PORT}:80"
+            - "${NGINX_SSL_PORT}:443"
         links:
             - "symfony:symfony"
         volumes:
             - ".:/home/docker:rw"
+            - "./app/Resources/docker/ssl:/etc/nginx/ssl/:ro"
             - "./app/Resources/docker/default.conf:/etc/nginx/conf.d/default.conf:ro"
 
     symfony:
@@ -32,7 +34,6 @@ services:
         links:
             - "db:db"
             - "mailcatcher:mailcatcher"
-            - "blackfire:blackfire"
         volumes:
             - ".:/home/docker:rw"
             - "./app/Resources/docker/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro"
@@ -73,11 +74,3 @@ services:
         ports:
             - "${MAILCATCHER_PORT}:1080"
             - "1025:1025"
-
-    blackfire:
-       image: blackfire/blackfire
-       container_name: blackfire
-       restart: "${RESTART_POLICIES}"
-       environment:
-          - "BLACKFIRE_SERVER_ID=${BLACKFIRE_SERVER_ID}"
-          - "BLACKFIRE_SERVER_TOKEN=${BLACKFIRE_SERVER_TOKEN}"

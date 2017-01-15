@@ -6,7 +6,7 @@ else
 	CONFIG = docker-compose.yml
 endif
 
-DOCKER_COMPOSE = docker-compose -p$(USER) -f$(CONFIG)
+COMPOSE_CMD = docker-compose -p$(USER) -f$(CONFIG)
 
 #####
 # Executed when you run "make" cmd
@@ -16,44 +16,49 @@ all: start
 #####
 # Start containers (Also builds images, if there not exists)
 start:
-	$(DOCKER_COMPOSE) up -d
+	$(COMPOSE_CMD) up -d
 
 #####
 # Stop containers (And also remove it)
 stop:
-	$(DOCKER_COMPOSE) kill
-	$(DOCKER_COMPOSE) stop
-	$(DOCKER_COMPOSE) rm --force
+	$(COMPOSE_CMD) kill
+	$(COMPOSE_CMD) stop
+	$(COMPOSE_CMD) rm --force
 
 #####
 # List current running containers
 list:
-	$(DOCKER_COMPOSE) ps
+	$(COMPOSE_CMD) ps
 
 #####
 # Execute "start" tasks and run provisioning scripts
 init: start
-	$(DOCKER_COMPOSE) run symfony /bin/sh -ec '/entrypoint.sh'
+	$(COMPOSE_CMD) run symfony /bin/sh -ec '/entrypoint.sh'
 
 #####
 # Start new bash terminal inside the Symfony Container
 ssh:
-	$(DOCKER_COMPOSE) run symfony bash
+	$(COMPOSE_CMD) run symfony bash
 
 #####
 # Run the PhpMetrics analysis and output "report.html"
 metrics:
-	$(DOCKER_COMPOSE) run symfony phpmetrics --report-html=report.html /home/docker/src
+	$(COMPOSE_CMD) run symfony phpmetrics --report-html=report.html /home/docker/src
+
+#####
+# Run the PhpMetrics analysis and output "report.html"
+documentation:
+	$(COMPOSE_CMD) run symfony phpDocumentor -d src/ -t doc/
 
 #####
 # Run the entire Unitary & Functional PhpUnit tests
 tests:
-	$(DOCKER_COMPOSE) run symfony vendor/bin/phpunit -c app/phpunit.xml
+	$(COMPOSE_CMD) run symfony vendor/bin/phpunit -c app/phpunit.xml
 
 #####
 # Display current running containers logs (Press "Ctrl + c" to exit)
 logs:
-	$(DOCKER_COMPOSE) logs -f
+	$(COMPOSE_CMD) logs -f
 
 #####
 # Execute "make" cmd & give environment variable "env" = prod
@@ -64,7 +69,7 @@ prod:
 #####
 # Remove stopped container
 clean-container:
-	$(DOCKER_COMPOSE) rm --force
+	$(COMPOSE_CMD) rm --force
 
 #####
 # Display available make commands
@@ -82,6 +87,7 @@ help:
 	@echo '| init            | Execute "start" tasks and run provisioning scripts                 |'
 	@echo '| ssh             | Start new bash terminal inside the Symfony Container               |'
 	@echo '| metrics         | Run the PhpMetrics analysis (output report.html)                   |'
+	@echo '| documentation   | Generated PhpDoc with phpDocumentor                                |'
 	@echo '| tests           | Execute the entire Unitary & Functional PhpUnit tests suit         |'
 	@echo '| logs            | Display current running containers logs (Press "Ctrl + c" to exit) |'
 	@echo '| prod            | Execute "make" cmd & give environment variable "env" = prod        |'

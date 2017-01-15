@@ -85,6 +85,7 @@ Recipes List:
 | init            | Execute "start" tasks and run provisioning scripts                 |
 | ssh             | Start new bash terminal inside the Symfony Container               |
 | metrics         | Run the PhpMetrics analysis (output report.html)				   |
+| documentation   | Generated PhpDoc with phpDocumentor                                |
 | logs            | Display current running containers logs (Press "Ctrl + c" to exit) |
 | prod            | Execute "make" cmd & give environment variable "env" = prod        |
 | clean-container | Remove stopped useless containers                                  |

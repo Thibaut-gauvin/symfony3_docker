@@ -29,7 +29,7 @@ echo '---------------------------------------'
 echo ''
 
 echo "Create database schema"
-/bin/bash -l -c "cd /home/docker && php app/console doctrine:schema:update --force"
+/bin/bash -l -c "cd /home/docker && php bin/console doctrine:schema:update --force"
 
 echo ''
 echo '---------------------------------------'
