@@ -16,12 +16,10 @@ services:
         dns_search: "symfony.dev"
         ports:
             - "${NGINX_PORT}:80"
-            - "${NGINX_SSL_PORT}:443"
         links:
             - "symfony:symfony"
         volumes:
-            - ".:/home/docker:rw"
-            - "./app/Resources/docker/ssl:/etc/nginx/ssl/:ro"
+            - ".:/home/docker"
             - "./app/Resources/docker/default.conf:/etc/nginx/conf.d/default.conf:ro"
 
     symfony:
@@ -35,7 +33,7 @@ services:
             - "db:db"
             - "mailcatcher:mailcatcher"
         volumes:
-            - ".:/home/docker:rw"
+            - ".:/home/docker"
             - "./app/Resources/docker/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro"
         working_dir: "/home/docker"
         user: "${DOCKER_USER}"
