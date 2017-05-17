@@ -20,7 +20,7 @@ Install [Docker Compose](http://docs.docker.com/compose/) on your system.
 
 - [Install instructions](https://docs.docker.com/installation/) for all supported systems
 
-Check that you can use docker commands without sudo !
+Check that you can use docker commands without sudo ! **[LINUX USER ONLY]**
 - To run docker command without sudo, you need to add your user (who has root privileges) to docker group & restart your sessions.
       
         $ sudo usermod -aG docker <user_name>
