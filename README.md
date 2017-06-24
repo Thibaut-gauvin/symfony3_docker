@@ -55,9 +55,9 @@ A Makefile is used to provide some useful shortcuts for manipulating docker & do
 
 You can now access to following services on your host machine:
 
-- **[Application](http://symfony.dev/)**
-- **[MailCatcher](http://localhost:1080)**
-- **[PhpMyAdmin](http://localhost:8080)**
+- **Application [http://localhost](http://localhost)**
+- **MailCatcher [http://localhost:1080](http://localhost:1080)**
+- **PhpMyAdmin [http://localhost:8080](http://localhost:8080)**
 
 **When you reboot your computer :**  
 - Just simply run following command to start your Containers (docker Images already created):

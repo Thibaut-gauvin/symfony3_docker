@@ -1,12 +1,27 @@
+###################################
+#      MAKEFILE FOR PROJECT       #
+###################################
+
+.SILENT:
+.PHONY: build
+
+# If you want to run a comand for the prod environment,
+# Simply add "-e env=prod" at the end of your make command
+#
+# Example:
+# $ make start -e env=prod
+
+# dev is the default environment, it use the docker-compose.yml file
+# prod use the docker-compose-prod.yml file
 env ?= dev
 
 ifeq ($(env),prod)
-	CONFIG = docker-compose-prod.yml
+CONFIG = docker-compose-prod.yml
 else
-	CONFIG = docker-compose.yml
+CONFIG = docker-compose.yml
 endif
 
-COMPOSE_CMD = docker-compose -p$(USER) -f$(CONFIG)
+COMPOSE_CMD = docker-compose -f$(CONFIG)
 
 #####
 # Executed when you run "make" cmd
@@ -19,16 +34,19 @@ start:
 	$(COMPOSE_CMD) up -d
 
 #####
-# Stop containers (And also remove it)
+# Stop containers
 stop:
-	$(COMPOSE_CMD) kill
-	$(COMPOSE_CMD) stop
-	$(COMPOSE_CMD) rm --force
+	$(COMPOSE_CMD) down
 
 #####
 # List current running containers
 list:
 	$(COMPOSE_CMD) ps
+
+#####
+# Display current running containers logs (Press "Ctrl + c" to exit)
+logs:
+	$(COMPOSE_CMD) logs -f
 
 #####
 # Execute "start" tasks and run provisioning scripts
@@ -53,12 +71,7 @@ documentation:
 #####
 # Run the entire Unitary & Functional PhpUnit tests
 tests:
-	$(COMPOSE_CMD) run symfony vendor/bin/phpunit -c app/phpunit.xml
-
-#####
-# Display current running containers logs (Press "Ctrl + c" to exit)
-logs:
-	$(COMPOSE_CMD) logs -f
+	$(COMPOSE_CMD) run symfony vendor/bin/phpunit -c app/phpunit.xml.dist
 
 #####
 # Execute "make" cmd & give environment variable "env" = prod

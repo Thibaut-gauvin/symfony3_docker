@@ -5,7 +5,7 @@ version: '2'
 # these values are taken from .env file
 
 #########################
-#          DEV          #
+#         PROD          #
 #########################
 
 services:
@@ -19,7 +19,7 @@ services:
             - "symfony:symfony"
         volumes:
             - ".:/home/docker"
-            - "./app/Resources/docker/dev.conf:/etc/nginx/conf.d/default.conf:ro"
+            - "./app/Resources/docker/default.conf:/etc/nginx/conf.d/default.conf:ro"
 
     symfony:
         build:
@@ -47,24 +47,3 @@ services:
             - "${MYSQL_PORT}:3306"
         volumes:
           - "./.data/db:/var/lib/mysql:Z"
-
-    phpmyadmin:
-        image: phpmyadmin/phpmyadmin
-        restart: "${RESTART_POLICIES}"
-        environment:
-            - "PMA_HOST=db"
-            - "PMA_USER=${MYSQL_USER}"
-            - "PMA_PASSWORD=${MYSQL_PASSWORD}"
-        ports:
-            - "${PMA_PORT}:80"
-        depends_on:
-            - "db"
-
-    mailcatcher:
-        image: yappabe/mailcatcher
-        restart: "${RESTART_POLICIES}"
-        ports:
-            - "${MAILCATCHER_PORT}:1080"
-            - "1025:1025"
-        links:
-            - "symfony:symfony"

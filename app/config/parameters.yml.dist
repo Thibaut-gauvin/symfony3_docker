@@ -3,25 +3,25 @@
 # http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
 parameters:
     # Database Config PROD
-    database_host:          127.0.0.1
+    database_host:          db
     database_port:          3306
-    database_name:          ~
-    database_user:          ~
-    database_password:      ~
+    database_name:          symfony_prod
+    database_user:          root
+    database_password:      devops_root
 
     # Database Config DEV
     dev_database_host:      db
     dev_database_port:      3306
     dev_database_name:      symfony
     dev_database_user:      root
-    dev_database_password:  root
+    dev_database_password:  devops_root
 
     # Database Config TEST
     test_database_host:     db
     test_database_port:     3306
-    test_database_name:     symfony
+    test_database_name:     symfony_test
     test_database_user:     root
-    test_database_password: root
+    test_database_password: devops_root
 
     # Prod Mailer Config
     mailer_transport:       ~
