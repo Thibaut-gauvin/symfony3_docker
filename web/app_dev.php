@@ -13,6 +13,7 @@ use Symfony\Component\Debug\Debug;
 $allowedAddresses = array(
     '127.0.0.1', 'fe80::1', '::1', // localhost
     '172.18.0.1', //docker
+    '172.19.0.1', //docker
 );
 
 if (isset($_SERVER['HTTP_CLIENT_IP'])

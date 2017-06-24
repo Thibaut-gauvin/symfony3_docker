@@ -22,7 +22,7 @@ NORMAL=""
 fi
 
 echo "Install Composer dependencies"
-/bin/bash -l -c "cd /home/docker && composer install --no-interaction --prefer-dist --optimize-autoloader"
+/bin/bash -l -c "cd /home/docker && composer install --no-interaction --prefer-dist"
 
 echo ''
 echo '---------------------------------------'
