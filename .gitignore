@@ -29,3 +29,7 @@
 # Docker shared volumns files
 .data/
 .env
+
+# Keep all .gitkeep file
+# /!\ Always keep this at the end of the file
+!.gitkeep
