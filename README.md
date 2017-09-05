@@ -130,6 +130,7 @@ If you want to use in production, you need to :
 
 - Copy your `fullchain.pem` & `privkey.pem` & `dhparam.pem` to `.data/web` directory
 - Update `.env` file and set `ENV` to "prod"
+- Update [nginx prod conf](.docker/prod/prod.conf) and set `server_name` at line 4 & line 39
 - Run `make start`
 - The first time, you need to build app yourself (like installing vendor & set parameter.yml ...)
 
