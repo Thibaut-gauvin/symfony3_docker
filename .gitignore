@@ -4,29 +4,32 @@
 /var/*
 !/var/cache
 /var/cache/*
-!var/cache/.gitkeep
 
 !/var/logs
 /var/logs/*
-!var/logs/.gitkeep
 
 !/var/sessions
 /var/sessions/*
-!var/sessions/.gitkeep
 !var/SymfonyRequirements.php
 
 /vendor/
-/bower_components
 /web/bundles/
 
-/.idea
-/node_modules
+/.idea/
+/node_modules/
 /npm-debug.log
+/yarn-error.log
 
-/web/assets
+# PhpUnit code coverage rapport
+/coverage/
 
+# Php cs-fixer cache
+/.php_cs.cache
+
+# Docker shared volumns files
 .data/
 .env
 
-/report.html
-/doc/
+# Keep all .gitkeep file
+# /!\ Always keep this at the end of the file
+!.gitkeep

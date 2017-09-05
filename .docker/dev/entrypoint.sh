@@ -35,9 +35,37 @@ echo ''
 echo '---------------------------------------'
 echo ''
 
+echo "Create tests database & schema"
+/bin/bash -l -c "cd /home/docker && php bin/console d:d:c --env=test && php bin/console d:s:u --force --env=test"
+
+echo ''
+echo '---------------------------------------'
+echo ''
+
+echo "Copy paste phpunit.xml config"
+/bin/bash -l -c "cd /home/docker && cp app/phpunit.xml.dist app/phpunit.xml"
+
+echo ''
+echo '---------------------------------------'
+echo ''
+
+echo "Install nodesjs dependencies"
+/bin/bash -l -c "cd /home/docker && yarn install"
+
+echo ''
+echo '---------------------------------------'
+echo ''
+
+echo "Compile assets"
+/bin/bash -l -c "cd /home/docker && yarn build"
+
+echo ''
+echo '---------------------------------------'
+echo ''
+
 echo ''
 printf "${YELLOW}"
 echo "Success, Your are ready to develop ! :D"
-echo "take a look at http://symfony.dev"
+echo "take a look at http://localhost"
 printf "${NORMAL}"
 echo ''

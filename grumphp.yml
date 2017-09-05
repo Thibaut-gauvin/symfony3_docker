@@ -1,0 +1,24 @@
+## Grumphp configuration file
+parameters:
+    bin_dir: "./vendor/bin"
+    git_dir: "."
+    ascii:
+        failed: ~
+        succeeded: ~
+    tasks:
+        phpcsfixer2:
+            allow_risky: true
+            cache_file: .php_cs.cache
+            config: .php_cs
+            rules: []
+            using_cache: true
+            verbose: true
+            diff: true
+            triggered_by: ['php']
+        securitychecker:
+            lockfile: ./composer.lock
+            format: ~
+            end_point: ~
+            timeout: ~
+        phpversion:
+            project: '7.1'

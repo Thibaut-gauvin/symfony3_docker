@@ -31,7 +31,7 @@ Check that you can use docker commands without sudo ! **[LINUX USER ONLY]**
 
 A Makefile is used to provide some useful shortcuts for manipulating docker & docker-compose commands
 
-- **1- Copying compose file :**   
+- **1- Create .env file :**   
 
   First, you need to create a copy of `.env.example` and call it `.env`
   
@@ -39,8 +39,15 @@ A Makefile is used to provide some useful shortcuts for manipulating docker & do
         $ cp .env.example .env
         
   This files contains sensible data that not be committed on GIT, you can modify it to you own needs !
+
+- **1- Set the .env file :**   
+
+  Update variables in `.env` file to fit your config 
   
-  Example: you can change Nginx listen port on your machine to avoid collision with other local apps
+        # Assume you are in project root, on Unix system
+        $ vi .env
+        
+  Because we use [grumphp](https://github.com/phpro/grumphp), we need to configure git inside the container to be able to commit properly
 
 - **2- Make the :coffee: :**
 
@@ -55,14 +62,14 @@ A Makefile is used to provide some useful shortcuts for manipulating docker & do
 
 You can now access to following services on your host machine:
 
-- **Application [http://localhost](http://localhost)**
-- **MailCatcher [http://localhost:1080](http://localhost:1080)**
+- **Symfony app [http://localhost](http://localhost)**
+- **Mailhog [http://localhost:1080](http://localhost:1080)**
 - **PhpMyAdmin [http://localhost:8080](http://localhost:8080)**
 
 **When you reboot your computer :**  
 - Just simply run following command to start your Containers (docker Images already created):
 
-        $ make
+        $ make start
 
 **-----------------------------------------------------**
         
@@ -75,18 +82,55 @@ Feel free to add more extra recipes depending on your needs.
 	$ make help
 
 
-Recipes List:
-
 | Recipes         | Utility                                                            |
 |-----------------|--------------------------------------------------------------------|
-| start           | Start containers (Also builds images, if there not exists)         |
-| stop            | Stop containers (And also remove it)                               |
+| start           | Start containers (Also builds & pull images, if there not exists)  |
+| stop            | Stop containers & remove docker networks                           |
 | list            | List current running containers                                    |
-| init            | Execute "start" tasks and run provisioning scripts                 |
 | ssh             | Start new bash terminal inside the Symfony Container               |
-| metrics         | Run the PhpMetrics analysis (output report.html)				   |
-| documentation   | Generated PhpDoc with phpDocumentor                                |
+| init            | Execute "start" tasks and run provisioning scripts                 |
+| tests           | Execute the entire Unitary & Functional PhpUnit tests suit         |
+| code-coverage   | Run the entire tests with code coverage                            |
 | logs            | Display current running containers logs (Press "Ctrl + c" to exit) |
-| prod            | Execute "make" cmd & give environment variable "env" = prod        |
+| clean-sf-cache  | Clean symfony cache & logs files                                   |
 | clean-container | Remove stopped useless containers                                  |
 | help            | Display available make commands                                    |
+
+**-----------------------------------------------------**
+
+## Dev Tools :
+
+You can use `make ssh` to connect inside the symfony container.
+
+What is inside ?
+
+- PHP 7.1-fpm with xdebug (dev) or OpCache & APCu (prod)
+- Nodejs (6.x)
+- [Yarn](https://yarnpkg.com/fr) 
+- [Phpmetrics](http://www.phpmetrics.org)
+- [Php-cs-fixer](https://github.com/FriendsOfPHP/PHP-CS-Fixer)
+- [Grumphp](https://github.com/phpro/grumphp)
+- Git (with user config)
+- [Tig](https://github.com/jonas/tig)
+
+Other service 
+- [Mailhog](https://github.com/mailhog/MailHog) for email testing during development
+- [PhpMyAdmin](https://www.phpmyadmin.net/) a simply mysql administrator
+
+**-----------------------------------------------------**
+
+## Deploy in Production :
+
+If you want to use in production, you need to : 
+- Get SSL certificates, [Let's Encrypt](https://letsencrypt.org) provide them for free
+- You also need to generate a `dhparam.pem` keys to enforce SSL encryption 
+
+        # To generate your dhparam.pem file, run in the terminal
+        openssl dhparam -out dhparam.pem 4096
+
+- Copy your `fullchain.pem` & `privkey.pem` & `dhparam.pem` to `.data/web` directory
+- Update `.env` file and set `ENV` to "prod"
+- Run `make start`
+- The first time, you need to build app yourself (like installing vendor & set parameter.yml ...)
+
+Test your app, http redirect to https. [ssl labs](https://www.ssllabs.com/ssltest) analysis give you a A+ baby ! 
