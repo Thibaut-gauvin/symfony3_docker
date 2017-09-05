@@ -36,8 +36,8 @@ doctrine:
 
 # Swiftmailer PROD Configuration
 swiftmailer:
-    transport: "%mailcatcher_transport%"
-    host:      "%mailcatcher_host%"
-    port:      "%mailcatcher_port%"
-    username:  "%mailcatcher_user%"
-    password:  "%mailcatcher_password%"
+    transport: "%mailer_transport%"
+    host:      "%mailer_host%"
+    port:      "%mailer_port%"
+    username:  "%mailer_user%"
+    password:  "%mailer_password%"

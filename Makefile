@@ -1,21 +1,21 @@
-###################################
-#      MAKEFILE FOR PROJECT       #
-###################################
+######################################
+##       MAKEFILE FOR PROJECT       ##
+######################################
 
 .SILENT:
-.PHONY: build
+.PHONY: tests build
 
-# If you want to run a comand for the prod environment,
-# Simply add "-e env=prod" at the end of your make command
-#
-# Example:
-# $ make start -e env=prod
+-include .env
+export
 
-# dev is the default environment, it use the docker-compose.yml file
-# prod use the docker-compose-prod.yml file
-env ?= dev
+## If you want to run a comand for the prod environment,
+## Simply replace value of ENV variable in '.env' file
 
-ifeq ($(env),prod)
+## dev is the default environment, it use the docker-compose.yml file
+## prod use the docker-compose-prod.yml file
+ENV ?= dev
+
+ifeq ($(ENV),prod)
 CONFIG = docker-compose-prod.yml
 else
 CONFIG = docker-compose.yml
@@ -24,86 +24,115 @@ endif
 COMPOSE_CMD = docker-compose -f$(CONFIG)
 
 #####
-# Executed when you run "make" cmd
-# Simply run "start" tasks
-all: start
+## Executed when you run "make" cmd
+## Simply run "help" tasks
+all: help
 
 #####
-# Start containers (Also builds images, if there not exists)
+## Build images (and ensure they are up to date)
+build:
+	@echo 'Pull & build required images for [$(ENV)] mode'
+	$(COMPOSE_CMD) build
+
+#####
+## Start containers
 start:
+	@echo 'Starting containers in [$(ENV)] mode'
 	$(COMPOSE_CMD) up -d
 
 #####
-# Stop containers
+## Stop containers & remove docker networks
 stop:
+	@echo 'Stoping containers in [$(ENV)] mode'
 	$(COMPOSE_CMD) down
 
 #####
-# List current running containers
+## List current running containers services
 list:
+	@echo 'List containers in [$(ENV)] mode'
 	$(COMPOSE_CMD) ps
 
 #####
-# Display current running containers logs (Press "Ctrl + c" to exit)
+## Display current running containers logs (Press "Ctrl + c" to exit)
 logs:
+	@echo 'Log containers in [$(ENV)] mode'
 	$(COMPOSE_CMD) logs -f
 
 #####
-# Execute "start" tasks and run provisioning scripts
-init: start
-	$(COMPOSE_CMD) run symfony /bin/sh -ec '/entrypoint.sh'
-
-#####
-# Start new bash terminal inside the Symfony Container
+## Start new bash terminal inside the Symfony Container
 ssh:
+	@echo 'SSH to symfony container in [$(ENV)] mode'
 	$(COMPOSE_CMD) run symfony bash
 
 #####
-# Run the PhpMetrics analysis and output "report.html"
-metrics:
-	$(COMPOSE_CMD) run symfony phpmetrics --report-html=report.html /home/docker/src
+## Execute "build" & "start" tasks and run provisioning scripts
+init: build start
+ifeq ($(ENV),dev)
+	@echo 'Running provisioning scripts'
+	$(COMPOSE_CMD) run symfony /bin/sh -ec '/entrypoint.sh'
+	make tests
+else
+	@echo 'This tasks is disabled in [$(ENV)] mode'
+endif
 
 #####
-# Run the PhpMetrics analysis and output "report.html"
-documentation:
-	$(COMPOSE_CMD) run symfony phpDocumentor -d src/ -t doc/
-
-#####
-# Run the entire Unitary & Functional PhpUnit tests
+## Run the entire Unitary & Functional PhpUnit tests
 tests:
-	$(COMPOSE_CMD) run symfony vendor/bin/phpunit -c app/phpunit.xml.dist
+ifeq ($(ENV),dev)
+	@echo 'Running php tests'
+	$(COMPOSE_CMD) run symfony vendor/bin/phpunit -c app/phpunit.xml
+	make clean-container
+else
+	@echo 'This tasks is disabled in [$(ENV)] mode'
+endif
 
 #####
-# Execute "make" cmd & give environment variable "env" = prod
-# This will results to start containers using configs & services described in "docker-compose-prod.yml" file
-prod:
-	make -e env=prod
+## Run the entire tests & code-coverage html report
+code-coverage:
+ifeq ($(ENV),dev)
+	@echo 'Running php tests & generate code-coverage html report'
+	$(COMPOSE_CMD) run symfony vendor/bin/phpunit -c app/phpunit.xml --coverage-html coverage/report_$(shell date "+%d-%m-%y-%H:%M")
+	make clean-container
+else
+	@echo 'This tasks is disabled in [$(ENV)] mode'
+endif
 
 #####
-# Remove stopped container
+## Clean symfony cache & logs files
+clean-sf-cache:
+ifeq ($(ENV),dev)
+	@echo 'Remove cache & logs files'
+	if [ -d  "./var/cache" ]; then rm -rf ./var/cache; fi;
+	if [ -d "./var/logs" ]; then rm -rf ./var/logs; fi;
+else
+	@echo 'This tasks is disabled in [$(ENV)] mode'
+endif
+
+#####
+## Remove stopped containers
 clean-container:
+	@echo 'Remove stopped containers'
 	$(COMPOSE_CMD) rm --force
 
 #####
-# Display available make commands
+## Display available make tasks
 help:
 	@echo 'Recipes List:'
 	@echo ''
-	@echo 'run make <recipes>'
+	@echo 'make <recipes>'
 	@echo ''
 	@echo '+-----------------+--------------------------------------------------------------------+'
 	@echo '| Recipes         | Utility                                                            |'
 	@echo '+-----------------+--------------------------------------------------------------------+'
-	@echo '| start           | Start containers (Also builds images, if there not exists)         |'
-	@echo '| stop            | Stop containers (And also remove it)                               |'
+	@echo '| start           | Start containers (Also builds & pull images, if there not exists)  |'
+	@echo '| stop            | Stop containers & remove docker networks                           |'
 	@echo '| list            | List current running containers                                    |'
-	@echo '| init            | Execute "start" tasks and run provisioning scripts                 |'
 	@echo '| ssh             | Start new bash terminal inside the Symfony Container               |'
-	@echo '| metrics         | Run the PhpMetrics analysis (output report.html)                   |'
-	@echo '| documentation   | Generated PhpDoc with phpDocumentor                                |'
+	@echo '| init            | Execute "start" tasks and run provisioning scripts                 |'
 	@echo '| tests           | Execute the entire Unitary & Functional PhpUnit tests suit         |'
+	@echo '| code-coverage   | Run the entire tests with code coverage                            |'
 	@echo '| logs            | Display current running containers logs (Press "Ctrl + c" to exit) |'
-	@echo '| prod            | Execute "make" cmd & give environment variable "env" = prod        |'
+	@echo '| clean-sf-cache  | Clean symfony cache & logs files                                   |'
 	@echo '| clean-container | Remove stopped useless containers                                  |'
 	@echo '+-----------------+--------------------------------------------------------------------+'
 	@echo ''

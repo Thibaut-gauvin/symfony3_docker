@@ -32,7 +32,7 @@ parameters:
 
     # Dev Mailer Config
     mailcatcher_transport:  smtp
-    mailcatcher_host:       mailcatcher
+    mailcatcher_host:       mailhog
     mailcatcher_port:       1025
     mailcatcher_user:       ~
     mailcatcher_password:   ~

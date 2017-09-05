@@ -78,6 +78,13 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
+# Get current git branch
+parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+
+export PS1="\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
+
 ####################
 #      ALIAS       #
 ####################
@@ -88,15 +95,23 @@ fi
 # LS
 alias ll='ls -alh'
 
-# GIT
+# Git
 alias gs='git status'
+alias gb='git branch'
 alias gba='git branch --all'
-alias gl='git log --pretty=format:"%h %s" --graph'
+alias gl='git log'
+alias gls='git log --stat --summary'
+alias tigs='tig status'
 
 # SYMFONY
 alias sf='php bin/console'
-alias dbrazTest='sf d:d:d --env=test --force && sf d:d:c --env=test && sf d:s:u --force --env=test -n && sf d:f:load --env=test -n'
-alias dbraz='sf d:d:d --force && sf d:d:c && sf d:m:m -n && sf d:f:load -n'
+alias dbraz='sf d:d:d --force && sf d:d:c && sf d:s:u --force'
+alias dbrazTest='sf d:d:d --force -e=test && sf d:d:c -e=test && sf d:s:u --force -e=test -n'
+alias clearCache='sf c:clear --no-warmup -e=dev && sf c:warmup -e=dev'
 
-alias clearCache='sudo php bin/console c:c --env=dev'
+# Test
+alias run-tests='vendor/bin/phpunit -c app/phpunit.xml'
+alias code-coverage='vendor/bin/phpunit -c app/phpunit.xml --coverage-html coverage/report_$(date "+%d-%m-%y-%H:%M")'
 
+# Lint php code with php-cs-fixer
+alias lint-php='php-cs-fixer fix'
