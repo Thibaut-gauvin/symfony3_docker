@@ -1,16 +1,16 @@
 ## Grumphp configuration file
 parameters:
-    bin_dir: "./vendor/bin"
-    git_dir: "."
+    hooks_dir: ./.docker/hooks
     ascii:
         failed: ~
         succeeded: ~
     tasks:
+        jsonlint: ~
+        yamllint: ~
         phpcsfixer2:
             allow_risky: true
             cache_file: .php_cs.cache
             config: .php_cs
-            rules: []
             using_cache: true
             verbose: true
             diff: true

@@ -1,6 +1,7 @@
 FROM php:7.1-fpm
 
 ARG DOCKER_USER="devops"
+ARG DOCKER_USER_ID=1001
 ARG GIT_USER_NAME="John Doe"
 ARG GIT_USER_EMAIL="johndoe@example.com"
 
@@ -25,9 +26,17 @@ RUN apt-get update \
     && chmod +x /usr/local/bin/composer
 
 
-# Install xdebug extention
+# Install & configure xdebug extention
 RUN pecl install xdebug \
-    && docker-php-ext-enable xdebug
+    && docker-php-ext-enable xdebug \
+    && echo 'xdebug.remote_enable=on' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.remote_autostart=on' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.remote_connect_back=off' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.remote_handler=dbgp' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.profiler_enable=0' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.profiler_output_dir="/var/www/html"' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.remote_port=9000' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.extended_info = 1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 
 # Install PhpMetrics
@@ -36,10 +45,11 @@ RUN chmod +x /phpmetrics.phar
 RUN mv /phpmetrics.phar /usr/local/bin/phpmetrics
 
 
-# Add user DOCKER_USER defined in .env & give sudo privilege
-RUN adduser --disabled-password --gecos '' ${DOCKER_USER}
-RUN adduser ${DOCKER_USER} sudo
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+# Add local user & give sudo privilege
+RUN useradd --shell /bin/bash -u ${DOCKER_USER_ID} -o -c "" -m ${DOCKER_USER} \
+    && adduser ${DOCKER_USER} sudo \
+    && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers \
+    && export HOME=/home/${DOCKER_USER}
 
 
 # Override default bash config
