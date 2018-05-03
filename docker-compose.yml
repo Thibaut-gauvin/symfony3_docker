@@ -15,31 +15,34 @@ services:
         restart: "${RESTART_POLICIES}"
         ports:
             - "${NGINX_PORT}:80"
-        links:
-            - "symfony:symfony"
         volumes:
-            - ".:/home/docker"
-            - "./.docker/dev/dev.conf:/etc/nginx/conf.d/default.conf:ro"
+            - "$PWD:/home/docker"
+            - "$PWD/.docker/dev/dev.conf:/etc/nginx/conf.d/default.conf:ro"
+        networks:
+            - "symfony"
 
     symfony:
         build:
             context: ./.docker/dev/
             args:
                 - "DOCKER_USER=${DOCKER_USER}"
+                - "DOCKER_USER_ID=${DOCKER_USER_ID}"
                 - "GIT_USER_NAME=${GIT_USER_NAME}"
                 - "GIT_USER_EMAIL=${GIT_USER_EMAIL}"
         image: symfony3_docker:dev
         restart: "${RESTART_POLICIES}"
-        links:
-            - "db:db"
+        environment:
+            - "XDEBUG_CONFIG=remote_host=${REMOTE_HOST}"
         volumes:
-            - ".:/home/docker"
-            - "./.docker/dev/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro"
+            - "$PWD:/home/docker"
+            - "$PWD/.docker/dev/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro"
         working_dir: "/home/docker"
         user: "${DOCKER_USER}"
+        networks:
+            - "symfony"
 
     db:
-        image: mysql
+        image: mysql:5.6
         restart: "${RESTART_POLICIES}"
         environment:
             - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
@@ -49,7 +52,9 @@ services:
         ports:
             - "${MYSQL_PORT}:3306"
         volumes:
-          - "./.data/db:/var/lib/mysql:Z"
+          - "$PWD/.data/db:/var/lib/mysql:Z"
+        networks:
+            - "symfony"
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
@@ -62,6 +67,8 @@ services:
             - "${PMA_PORT}:80"
         depends_on:
             - "db"
+        networks:
+            - "symfony"
 
     mailhog:
         image: mailhog/mailhog
@@ -69,5 +76,9 @@ services:
         ports:
             - "${MAILHOG_PORT}:8025"
             - "1025:1025"
-        links:
-            - "symfony:symfony"
+        networks:
+            - "symfony"
+
+networks:
+    symfony:
+        driver: bridge
