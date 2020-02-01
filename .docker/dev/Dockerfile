@@ -60,7 +60,7 @@ RUN su ${DOCKER_USER} -c "git config --global core.editor nano"
 
 
 # Install TIG (cli git interface)
-RUN apt-get install tig
+RUN apt-get install tig -y
 
 
 # Install NodeJs
